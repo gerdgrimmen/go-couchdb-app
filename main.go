@@ -2,13 +2,25 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/rhinoman/couchdb-go"
 )
 
+var database string
+
 func main() {
-	fmt.Println("asd")
+	if len(os.Args) == 1 { /* os.Args[0] is "compiler" or "compiler.exe" */
+		fmt.Println("P-Put it i-in me, Senpai!")
+		return
+	} else if len(os.Args) == 2 {
+		filename := os.Args[1]
+		fmt.Println("You put it in me, Senpai! <3", filename)
+	} else if len(os.Args) > 2 { /* os.Args[0] is "main" or "main.exe" */
+		fmt.Println("But Senpai, I can't Handle so many!")
+		return
+	}
 	type TestDocument struct {
 		Title string
 		Note  string
