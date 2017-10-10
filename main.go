@@ -12,21 +12,21 @@ import (
 
 var database string
 
-// Payload is
+// Payload is example code
 type Payload struct {
 	Stuff Data
 }
 
-// Data is
+// Data is example code
 type Data struct {
 	Fruit   Fruits
 	Veggies Vegetables
 }
 
-// Fruits is
+// Fruits is example code
 type Fruits map[string]int
 
-// Vegetables is
+// Vegetables is example code
 type Vegetables map[string]int
 
 func main() {
