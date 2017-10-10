@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
@@ -9,6 +11,23 @@ import (
 )
 
 var database string
+
+// Payload is
+type Payload struct {
+	Stuff Data
+}
+
+// Data is
+type Data struct {
+	Fruit   Fruits
+	Veggies Vegetables
+}
+
+// Fruits is
+type Fruits map[string]int
+
+// Vegetables is
+type Vegetables map[string]int
 
 func main() {
 	if len(os.Args) == 1 { /* os.Args[0] is "compiler" or "compiler.exe" */
@@ -52,8 +71,36 @@ func main() {
 	//If all is well, rev should contain the revision of the newly created
 	//or updated Document
 
+	//http section
+	http.HandleFunc("/", serveRest)
+	http.ListenAndServe("localhost:1337", nil)
+
 }
 
 func genUUID() string {
 	return "sad"
+}
+
+func serveRest(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r)
+	fmt.Println(r.URL)
+	response, err := getJSONRespnse()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Fprintf(w, string(response))
+}
+
+func getJSONRespnse() ([]byte, error) {
+	fruits := make(map[string]int)
+	fruits["Apple"] = 25
+	fruits["Orange"] = 11
+	vegetables := make(map[string]int)
+	vegetables["Carrots"] = 21
+	vegetables["Peppers"] = 0
+
+	d := Data{fruits, vegetables}
+	p := Payload{d}
+
+	return json.MarshalIndent(p, "", "  ")
 }
