@@ -5,14 +5,17 @@ import (
 	"os"
 )
 
+// functionName is
+var functionName string
+
 func main() {
 
 	if len(os.Args) == 1 { /* os.Args[0] is "compiler" or "compiler.exe" */
-		fmt.Println(os.Args, os.Args[0])
-
+		//fmt.Println(os.Args, os.Args[0])
+		help()
 		return
-	} else if len(os.Args) == 2 {
-		functionName := os.Args[1]
+	} else if len(os.Args) >= 2 {
+		functionName = os.Args[1]
 		fmt.Println(os.Args, os.Args[1], functionName)
 		switch functionName {
 		case "create":
@@ -34,14 +37,12 @@ func main() {
 			fmt.Println("Functionname not found: ", functionName)
 			os.Exit(3)
 		}
-	} else if len(os.Args) > 2 { /* os.Args[0] is "main" or "main.exe" */
-		fmt.Println(os.Args, os.Args[1], os.Args[2])
-		return
 	}
 }
 
 func createDB() {
-
+	functionName = "asd"
+	fmt.Println(functionName)
 }
 
 func selectDB() {
