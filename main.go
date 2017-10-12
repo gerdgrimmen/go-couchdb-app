@@ -54,11 +54,19 @@ func main() {
 		fmt.Println("error")
 	}
 	auth := couchdb.BasicAuth{Username: "admin", Password: "password"}
-	//created := conn.CreateDB("mydatabase", &auth)
-	/*if created != nil {
+	dbname := "mydatabase"
+	created := conn.CreateDB(dbname, &auth)
+	//*
+	if created != nil {
 		fmt.Println(created)
-	}*/
-	db := conn.SelectDB("mydatabase", &auth)
+	}
+	//*/
+	db := conn.SelectDB(dbname, &auth)
+	dblist, err := conn.GetDBList()
+	fmt.Println(dblist)
+	if dblist[2] == dbname {
+		fmt.Println("yeah")
+	}
 	theDoc := TestDocument{
 		Title: "My Document",
 		Note:  "This is a note",
@@ -68,7 +76,6 @@ func main() {
 		Title: "",
 		Note:  "",
 	}
-
 	theTest := MyTest{
 		Title: "My Document",
 	}
@@ -85,7 +92,7 @@ func main() {
 	fmt.Println("before")
 	fmt.Println(blibb)
 	fmt.Println(theTest.Title)
-	//fmt.Println(theTest.Note)
+	//fmt.Println(theTest.Note) struct doesn't have a Note Field
 	fmt.Println(theTest)
 	fmt.Println("after")
 
@@ -106,7 +113,7 @@ func main() {
 }
 
 func genUUID() string {
-	return "sad2"
+	return "sddddad2"
 }
 
 func serveRest(w http.ResponseWriter, r *http.Request) {
@@ -132,3 +139,27 @@ func getJSONRespnse() ([]byte, error) {
 
 	return json.MarshalIndent(p, "", "  ")
 }
+
+/*
+
+func IsValidCategory(category string) bool {
+    switch category {
+    case
+        "auto",
+        "news",
+        "sport",
+        "music":
+        return true
+    }
+    return false
+}
+
+
+visitedURL := map[string]bool {
+    "http://www.google.com": true,
+    "https://paypal.com": true,
+}
+if visitedURL[thisSite] {
+    fmt.Println("Already been here.")
+}
+*/
