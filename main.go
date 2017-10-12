@@ -32,7 +32,7 @@ type Vegetables map[string]int
 func main() {
 	if len(os.Args) == 1 { /* os.Args[0] is "compiler" or "compiler.exe" */
 		fmt.Println("P-Put it i-in me, Senpai!")
-		return
+		//return
 	} else if len(os.Args) == 2 {
 		filename := os.Args[1]
 		fmt.Println("You put it in me, Senpai! <3", filename)
@@ -44,6 +44,9 @@ func main() {
 		Title string
 		Note  string
 	}
+	type MyTest struct {
+		Title string
+	}
 
 	var timeout = time.Duration(500 * time.Millisecond)
 	conn, err := couchdb.NewConnection("127.0.0.1", 5984, timeout)
@@ -51,18 +54,41 @@ func main() {
 		fmt.Println("error")
 	}
 	auth := couchdb.BasicAuth{Username: "admin", Password: "password"}
-	created := conn.CreateDB("mydatabase", &auth)
-	if created != nil {
+	//created := conn.CreateDB("mydatabase", &auth)
+	/*if created != nil {
 		fmt.Println(created)
-	}
+	}*/
 	db := conn.SelectDB("mydatabase", &auth)
 	theDoc := TestDocument{
 		Title: "My Document",
 		Note:  "This is a note",
 	}
 
+	theDoc2 := TestDocument{
+		Title: "",
+		Note:  "",
+	}
+
+	theTest := MyTest{
+		Title: "My Document",
+	}
 	theID := genUUID() //use whatever method you like to generate a uuid
 	//The third argument here would be a revision, if you were updating an existing document
+	blibb, err := db.Read(theID, theDoc2, nil)
+	fmt.Println("before")
+	fmt.Println(blibb)
+	fmt.Println(theDoc.Title)
+	fmt.Println(theDoc.Note)
+	fmt.Println(theDoc)
+	fmt.Println("after")
+	blibb, err = db.Read(theID, theTest, nil)
+	fmt.Println("before")
+	fmt.Println(blibb)
+	fmt.Println(theTest.Title)
+	//fmt.Println(theTest.Note)
+	fmt.Println(theTest)
+	fmt.Println("after")
+
 	rev, err := db.Save(theDoc, theID, "")
 	if err != nil {
 		fmt.Println(err)
@@ -70,15 +96,17 @@ func main() {
 	fmt.Println(rev)
 	//If all is well, rev should contain the revision of the newly created
 	//or updated Document
-
-	//http section
-	http.HandleFunc("/", serveRest)
-	http.ListenAndServe("localhost:1337", nil)
+	bla := "asd"
+	if bla == "asdd" {
+		//http section
+		http.HandleFunc("/", serveRest)
+		http.ListenAndServe("localhost:1337", nil)
+	}
 
 }
 
 func genUUID() string {
-	return "sad"
+	return "sad2"
 }
 
 func serveRest(w http.ResponseWriter, r *http.Request) {
