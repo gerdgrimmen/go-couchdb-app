@@ -30,6 +30,9 @@ func main() {
 		case "all_db":
 			fmt.Println("all_db")
 			allDB()
+		case "server":
+			fmt.Println("server")
+			server()
 		case "help":
 			fmt.Println("help")
 			help()
@@ -59,6 +62,10 @@ func allDB() {
 
 func help() {
 	fmt.Println("help: ")
+}
+
+func server() {
+
 }
 
 func checkConfig() bool {

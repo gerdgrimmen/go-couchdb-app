@@ -1,10 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/rhinoman/couchdb-go"
@@ -13,33 +11,42 @@ import (
 var database string
 
 // Payload is example code
-type Payload struct {
+/*type Payload struct {
 	Stuff Data
 }
+//*/
 
 // Data is example code
-type Data struct {
+/*type Data struct {
 	Fruit   Fruits
 	Veggies Vegetables
 }
+//*/
+
+// MyTest is
+type MyTest struct {
+	Title string
+}
 
 // Fruits is example code
-type Fruits map[string]int
+//type Fruits map[string]int
 
 // Vegetables is example code
-type Vegetables map[string]int
+//type Vegetables map[string]int
 
 func main() {
-	if len(os.Args) == 1 { /* os.Args[0] is "compiler" or "compiler.exe" */
-		fmt.Println("P-Put it i-in me, Senpai!")
-		//return
-	} else if len(os.Args) == 2 {
-		filename := os.Args[1]
-		fmt.Println("You put it in me, Senpai! <3", filename)
-	} else if len(os.Args) > 2 { /* os.Args[0] is "main" or "main.exe" */
-		fmt.Println("But Senpai, I can't Handle so many!")
-		return
-	}
+	/*
+		if len(os.Args) == 1 { // os.Args[0] is "compiler" or "compiler.exe"
+			fmt.Println("P-Put it i-in me, Senpai!")
+			//return
+		} else if len(os.Args) == 2 {
+			filename := os.Args[1]
+			fmt.Println("You put it in me, Senpai! <3", filename)
+		} else if len(os.Args) > 2 { // os.Args[0] is "main" or "main.exe"
+			fmt.Println("But Senpai, I can't Handle so many!")
+			return
+		}
+	//*/
 	type TestDocument struct {
 		Title string
 		Note  string
@@ -54,19 +61,7 @@ func main() {
 		fmt.Println("error")
 	}
 	auth := couchdb.BasicAuth{Username: "admin", Password: "password"}
-	dbname := "mydatabase"
-	created := conn.CreateDB(dbname, &auth)
-	//*
-	if created != nil {
-		fmt.Println(created)
-	}
-	//*/
-	db := conn.SelectDB(dbname, &auth)
-	dblist, err := conn.GetDBList()
-	fmt.Println(dblist)
-	if dblist[2] == dbname {
-		fmt.Println("yeah")
-	}
+	db := conn.SelectDB("mydatabase", &auth)
 	theDoc := TestDocument{
 		Title: "My Document",
 		Note:  "This is a note",
@@ -76,46 +71,45 @@ func main() {
 		Title: "",
 		Note:  "",
 	}
+
 	theTest := MyTest{
 		Title: "My Document",
 	}
-	theID := genUUID() //use whatever method you like to generate a uuid
-	//The third argument here would be a revision, if you were updating an existing document
-	blibb, err := db.Read(theID, theDoc2, nil)
-	fmt.Println("before")
-	fmt.Println(blibb)
-	fmt.Println(theDoc.Title)
-	fmt.Println(theDoc.Note)
-	fmt.Println(theDoc)
-	fmt.Println("after")
-	blibb, err = db.Read(theID, theTest, nil)
-	fmt.Println("before")
-	fmt.Println(blibb)
-	fmt.Println(theTest.Title)
-	//fmt.Println(theTest.Note) struct doesn't have a Note Field
-	fmt.Println(theTest)
-	fmt.Println("after")
 
+	theID := genUUID()
+	blibb, err := db.Read(theID, theDoc2, nil)
+	fmt.Println(blibb)
+	/*
+		fmt.Println(theDoc.Title)
+		fmt.Println(theDoc.Note)
+		fmt.Println(theDoc)
+		//*/
+	blibb, err = db.Read(theID, theTest, nil)
+	/*
+		fmt.Println(theTest.Title)
+		//fmt.Println(theTest.Note)
+		fmt.Println(theTest)
+		//*/
 	rev, err := db.Save(theDoc, theID, "")
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println(rev)
-	//If all is well, rev should contain the revision of the newly created
-	//or updated Document
 	bla := "asd"
 	if bla == "asdd" {
 		//http section
-		http.HandleFunc("/", serveRest)
+		http.HandleFunc("/mydatabase", serveRestCouchDB)
+		//http.HandleFunc("/", serveRest)
 		http.ListenAndServe("localhost:1337", nil)
 	}
 
 }
 
 func genUUID() string {
-	return "sddddad2"
+	return "sad2"
 }
 
+/*
 func serveRest(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r)
 	fmt.Println(r.URL)
@@ -125,7 +119,50 @@ func serveRest(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, string(response))
 }
+//*/
+func serveRestCouchDB(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r)
+	fmt.Println(r.URL)
+	response, err := simpleSelect()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Fprintf(w, string(response))
+}
+func simpleDBCreate() (string, error) {
+	conn, err := couchdb.NewConnection("127.0.0.1", 5984, 5000)
+	if err != nil {
+		fmt.Println("error")
+	}
+	auth := couchdb.BasicAuth{Username: "admin", Password: "password"}
+	created := conn.CreateDB("mydatabase", &auth)
+	if created != nil {
+		return "", err
+	}
+	return "{ok}.", nil
+}
+func simpleSelect() (string, error) {
+	conn, err := couchdb.NewConnection("127.0.0.1", 5984, 5000)
+	if err != nil {
+		fmt.Println("error")
+	}
+	auth := couchdb.BasicAuth{Username: "admin", Password: "password"}
+	//created := conn.CreateDB("mydatabase", &auth)
+	/*if created != nil {
+		fmt.Println(created)
+	}*/
+	db := conn.SelectDB("mydatabase", &auth)
+	myt := MyTest{
+		Title: "asd",
+	}
+	blibb, err := db.Read("sad", myt, nil)
+	if err != nil {
+		return "", err
+	}
+	return blibb, nil
+}
 
+/*
 func getJSONRespnse() ([]byte, error) {
 	fruits := make(map[string]int)
 	fruits["Apple"] = 25
@@ -140,26 +177,4 @@ func getJSONRespnse() ([]byte, error) {
 	return json.MarshalIndent(p, "", "  ")
 }
 
-/*
-
-func IsValidCategory(category string) bool {
-    switch category {
-    case
-        "auto",
-        "news",
-        "sport",
-        "music":
-        return true
-    }
-    return false
-}
-
-
-visitedURL := map[string]bool {
-    "http://www.google.com": true,
-    "https://paypal.com": true,
-}
-if visitedURL[thisSite] {
-    fmt.Println("Already been here.")
-}
-*/
+//*/
