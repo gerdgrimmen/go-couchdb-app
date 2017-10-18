@@ -61,6 +61,10 @@ func main() {
 		fmt.Println("error")
 	}
 	auth := couchdb.BasicAuth{Username: "admin", Password: "password"}
+	created := conn.CreateDB("mydatabase", &auth)
+	if created != nil {
+		return
+	}
 	db := conn.SelectDB("mydatabase", &auth)
 	theDoc := TestDocument{
 		Title: "My Document",
